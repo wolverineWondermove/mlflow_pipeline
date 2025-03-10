@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: local-deployment-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: local-deployment
+  template:
+    metadata:
+      labels:
+        app: local-deployment
+    spec:
+      containers:
+      - name: api-server
+        image: wcr.s-kuber.io/mlflow-pipeline/local-deployment:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: model-pvc
+          mountPath: /model
+      volumes:
+      - name: model-pvc
+        persistentVolumeClaim:
+          claimName: model-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+spec:
+  selector:
+    app: local-deployment
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+    nodePort: 30080

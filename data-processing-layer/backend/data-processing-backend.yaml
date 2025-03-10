@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-processing-backend
+  labels:
+    app: data-processing-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-processing-backend
+  template:
+    metadata:
+      labels:
+        app: data-processing-backend
+    spec:
+      containers:
+      - name: backend
+        image: wcr.s-kuber.io/mlflow-pipeline/data-processing-backend:latest
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: data-vol
+          mountPath: /uploaded_files
+      volumes:
+      - name: data-vol
+        persistentVolumeClaim:
+          claimName: data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-processing-backend-service
+spec:
+  selector:
+    app: data-processing-backend
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  type: NodePort

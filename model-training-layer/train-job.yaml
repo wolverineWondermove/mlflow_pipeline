@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: model-training-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: model-training
+    spec:
+      containers:
+      - name: trainer
+        image: wcr.s-kuber.io/mlflow-pipeline/model-training:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: data-pvc
+          mountPath: /data
+        - name: model-pvc
+          mountPath: /model
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+          requests:
+            nvidia.com/gpu: 1
+      restartPolicy: Never
+      volumes:
+      - name: data-pvc
+        persistentVolumeClaim:
+          claimName: data-pvc
+      - name: model-pvc
+        persistentVolumeClaim:
+          claimName: model-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-training-service
+spec:
+  selector:
+    app: model-training
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000

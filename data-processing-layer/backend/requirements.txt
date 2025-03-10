@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pandas
+datasets
+huggingface_hub
+mlflow
+python-multipart
+openpyxl

@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+mlflow
+datasets
+transformers
+torch
+scikit-learn
+huggingface_hub

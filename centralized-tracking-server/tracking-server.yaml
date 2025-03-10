@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-tracking-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-tracking-server
+  template:
+    metadata:
+      labels:
+        app: mlflow-tracking-server
+    spec:
+      containers:
+      - name: mlflow-tracking-server
+        image: wcr.s-kuber.io/mlflow-pipeline/centralized-tracking-server:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 5000
+        volumeMounts:
+          - name: mlflow-artifacts
+            mountPath: /mlartifacts
+      volumes:
+        - name: mlflow-artifacts
+          persistentVolumeClaim:
+            claimName: mlflow-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow-tracking-service
+spec:
+  type: NodePort
+  selector:
+    app: mlflow-tracking-server
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 30050

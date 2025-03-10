@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: model-conversion-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: model-conversion
+    spec:
+      containers:
+      - name: converter
+        image: wcr.s-kuber.io/mlflow-pipeline/model-conversion:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: model-pvc
+          mountPath: /model
+      restartPolicy: Never
+      volumes:
+      - name: model-pvc
+        persistentVolumeClaim:
+          claimName: model-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-conversion-service
+spec:
+  selector:
+    app: model-conversion
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000

@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: model-evaluation-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: model-evaluation
+    spec:
+      containers:
+      - name: evaluator
+        image: wcr.s-kuber.io/mlflow-pipeline/model-evaluation:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: model-pvc
+          mountPath: /model
+      restartPolicy: Never
+      volumes:
+      - name: model-pvc
+        persistentVolumeClaim:
+          claimName: model-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-evaluation-service
+spec:
+  selector:
+    app: model-evaluation
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000

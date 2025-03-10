@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/0/335adbeb692543ca89f295e1d54d2c17/artifacts
+deleted_time: 1741590538830
+end_time: 1741589826815
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 335adbeb692543ca89f295e1d54d2c17
+run_name: upload_to_hf_hub
+run_uuid: 335adbeb692543ca89f295e1d54d2c17
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1741589826790
+status: 3
+tags: []
+user_id: changkeunlee
